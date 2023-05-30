@@ -1,4 +1,8 @@
-use clap::{crate_version, Arg, Command};
+mod args;
+mod mapping;
+
+use std::collections::HashMap;
+use clap::{Parser};
 use fuser::{
     FileAttr, FileType, Filesystem, MountOption, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry,
     Request,
@@ -6,6 +10,9 @@ use fuser::{
 use libc::ENOENT;
 use std::ffi::OsStr;
 use std::time::{Duration, UNIX_EPOCH};
+use crate::args::Args;
+use tokio;
+use crate::mapping::Destination;
 
 const TTL: Duration = Duration::from_secs(1); // 1 second
 
@@ -47,9 +54,24 @@ const HELLO_TXT_ATTR: FileAttr = FileAttr {
     blksize: 512,
 };
 
-struct HelloFS;
+struct MappingFS {
+    mapping: HashMap<String, Destination>,
+}
 
-impl Filesystem for HelloFS {
+impl MappingFS {
+    fn new(mapping: HashMap<String, Destination>) -> Self {
+        Self { mapping }
+    }
+}
+
+impl From<mapping::MappingConfig> for MappingFS {
+    fn from(mapping: mapping::MappingConfig) -> Self {
+        let mut mapping_fs = Self::new(mapping.mapping);
+        mapping_fs
+    }
+}
+
+impl Filesystem for MappingFS {
     fn lookup(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: ReplyEntry) {
         if parent == 1 && name.to_str() == Some("hello.txt") {
             reply.entry(&TTL, &HELLO_TXT_ATTR, 0);
@@ -103,9 +125,14 @@ impl Filesystem for HelloFS {
             (2, FileType::RegularFile, "hello.txt"),
         ];
 
-        for (i, entry) in entries.into_iter().enumerate().skip(offset as usize) {
+        for (i, entry) in self.mapping.iter().enumerate().skip(offset as usize) {
             // i + 1 means the index of the next entry
-            if reply.add(entry.0, (i + 1) as i64, entry.1, entry.2) {
+            let (name, dest) = entry;
+            let kind = match dest {
+                Destination::File { path } => FileType::RegularFile,
+                Destination::Folder => FileType::Directory,
+            };
+            if reply.add(i as u64, (i + 1) as i64, kind, name) {
                 break;
             }
         }
@@ -113,35 +140,22 @@ impl Filesystem for HelloFS {
     }
 }
 
-fn main() {
-    let matches = Command::new("hello")
-        .version(crate_version!())
-        .author("Christopher Berner")
-        .arg(
-            Arg::new("MOUNT_POINT")
-                .required(true)
-                .index(1)
-                .help("Act as a client, and mount FUSE at given path"),
-        )
-        .arg(
-            Arg::new("auto_unmount")
-                .long("auto_unmount")
-                .help("Automatically unmount on process exit"),
-        )
-        .arg(
-            Arg::new("allow-root")
-                .long("allow-root")
-                .help("Allow root user to access filesystem"),
-        )
-        .get_matches();
+#[tokio::main]
+async fn main() {
     env_logger::init();
-    let mountpoint: &String = matches.get_one("MOUNT_POINT").unwrap();
+    let args = Args::parse();
+
     let mut options = vec![MountOption::RO, MountOption::FSName("hello".to_string())];
-    if matches.contains_id("auto_unmount") {
+    if args.auto_unmount {
         options.push(MountOption::AutoUnmount);
     }
-    if matches.contains_id("allow-root") {
+    if args.allow_root {
         options.push(MountOption::AllowRoot);
     }
-    fuser::mount2(HelloFS, mountpoint, &options).unwrap();
+
+    let mapping_file = tokio::fs::File::open(args.mapping_file).await.unwrap();
+    let rdr = std::io::BufReader::new(mapping_file.into_std().await);
+    let mut config: mapping::MappingConfig = serde_json::from_reader(rdr).unwrap();
+    let mapping_fs = MappingFS::from(config);
+    fuser::mount2(mapping_fs, args.mountpoint, &options).unwrap();
 }
