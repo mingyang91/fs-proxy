@@ -16,7 +16,7 @@ use crate::args::Args;
 use tokio;
 use tokio::io::{AsyncSeekExt, AsyncReadExt};
 use tokio::runtime::{Runtime};
-use log::{debug, error};
+use log::{debug, error, info};
 use crate::inode::{INode, INodeOps, INodeTable};
 use crate::mapping::Path;
 
@@ -197,20 +197,24 @@ impl Filesystem for MappingFS {
   ) {
     debug!("read(ino={}, offset={})", ino, offset);
     let Some (inode) = self.inode_table.get_by_ino(ino) else {
+      debug!("read: {} not found", ino);
       reply.error(ENOENT);
       return;
     };
 
     match inode.borrow().deref() {
       INode::Folder { .. } => {
+        debug!("read: {} is a folder", ino);
         reply.error(EISDIR);
         return;
       }
       INode::File { target, .. } => {
+        debug!("follow read request to {}", target);
         let binding = target.clone();
         self.runtime.spawn(async move {
           match Self::read(&binding, offset, size).await {
             Ok(data) => {
+              debug!("read: {} bytes read", data.len());
               reply.data(&data);
             }
             Err(err) => {
