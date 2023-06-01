@@ -25,6 +25,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
 COPY --from=builder /app/target/release/fs-proxy /app/fs-proxy
 COPY res /app/res
 WORKDIR /app
-RUN mkdir /mnt/fs-proxy
+RUN mkdir -p /workdir/fs-proxy
 ENV RUST_LOG=debug
-CMD ["./fs-proxy", "--mapping-file", "/app/res/mapping-tree.json", "/mnt/fs-proxy"]
+CMD ["./fs-proxy", "--mapping-file", "/app/res/mapping-tree.json", "/workdir/fs-proxy"]

@@ -4,10 +4,7 @@ mod inode;
 
 use std::cell::RefCell;
 use clap::{Parser};
-use fuser::{
-  FileAttr, FileType, Filesystem, MountOption, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry,
-  Request,
-};
+use fuser::{FileAttr, FileType, Filesystem, MountOption, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry, Request, ReplyOpen};
 use libc::{EIO, EISDIR, ENOENT};
 use std::ffi::OsStr;
 use std::io::{Error, SeekFrom};
