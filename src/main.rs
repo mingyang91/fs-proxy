@@ -8,15 +8,16 @@ use fuser::{
   FileAttr, FileType, Filesystem, MountOption, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry,
   Request,
 };
-use libc::{EIO, ENOENT};
+use libc::{EIO, EISDIR, ENOENT};
 use std::ffi::OsStr;
-use std::io::Error;
+use std::io::{Error, SeekFrom};
 use std::ops::{Add, Deref};
 use std::os::unix::fs::MetadataExt;
 use std::rc::Rc;
 use std::time::{Duration, UNIX_EPOCH};
 use crate::args::Args;
 use tokio;
+use tokio::io::{AsyncSeekExt, AsyncReadExt};
 use tokio::runtime::{Runtime};
 use log::{debug, error};
 use crate::inode::{INode, INodeOps, INodeTable};
@@ -42,7 +43,6 @@ const HELLO_DIR_ATTR: FileAttr = FileAttr {
   blksize: 512,
 };
 
-const HELLO_TXT_CONTENT: &str = "Hello World!\n";
 
 struct MappingFS {
   runtime: Runtime,
@@ -91,9 +91,14 @@ impl MappingFS {
     Ok(attr)
   }
 
-  fn getattr_sync(&self, name: &String) -> Result<FileAttr, Error> {
-    self.runtime.block_on(Self::getattr(name))
+  async fn read(name: &String, offset: i64, size: u32) -> Result<Vec<u8>, Error> {
+    let mut file = tokio::fs::File::open(name).await?;
+    let mut buf = vec![0; size as usize];
+    file.seek(SeekFrom::Start(offset as u64)).await?;
+    file.read_exact(&mut buf).await?;
+    Ok(buf)
   }
+
 }
 
 fn make_folder_attr(inode: &INode) -> FileAttr {
@@ -129,16 +134,18 @@ impl Filesystem for MappingFS {
         match inode.borrow().deref() {
           INode::File { target, .. } => {
             debug!("lookup: found file {} -> {}", filename, target);
-            match self.getattr_sync(target) {
-              Ok(attr) => {
-                reply.entry(&TTL, &attr, 0);
+            let binding = target.clone();
+            self.runtime.spawn(async move {
+              match Self::getattr(&binding).await {
+                Ok(attr) => {
+                  reply.entry(&TTL, &attr, 0);
+                }
+                Err(err) => {
+                  error!("Failed to get attr for {}: {}", binding, err);
+                  reply.error(EIO)
+                }
               }
-              Err(err) => {
-                error!("Failed to get attr for {}: {}", target, err);
-                reply.error(EIO)
-              }
-            }
-
+            });
           }
           INode::Folder { .. } => {
             debug!("lookup: found folder {}", filename);
@@ -161,15 +168,18 @@ impl Filesystem for MappingFS {
 
     match inode.borrow().deref() {
       INode::File { target, .. } => {
-        match self.getattr_sync(target) {
-          Ok(attr) => {
-            reply.attr(&TTL, &attr);
+        let bind = target.clone();
+        self.runtime.spawn(async move {
+          match Self::getattr(&bind).await {
+            Ok(attr) => {
+              reply.attr(&TTL, &attr);
+            }
+            Err(err) => {
+              error!("Failed to get attr for {}: {}", bind, err);
+              reply.error(EIO)
+            }
           }
-          Err(err) => {
-            error!("Failed to get attr for {}: {}", target, err);
-            reply.error(EIO)
-          }
-        }
+        });
       }
       INode::Folder { .. } => {
         reply.attr(&TTL, &HELLO_DIR_ATTR);
@@ -183,16 +193,37 @@ impl Filesystem for MappingFS {
     ino: u64,
     _fh: u64,
     offset: i64,
-    _size: u32,
+    size: u32,
     _flags: i32,
     _lock: Option<u64>,
     reply: ReplyData,
   ) {
-    if ino == 2 {
-      reply.data(&HELLO_TXT_CONTENT.as_bytes()[offset as usize..]);
-    } else {
+    debug!("read(ino={}, offset={})", ino, offset);
+    let Some (inode) = self.inode_table.get_by_ino(ino) else {
       reply.error(ENOENT);
-    }
+      return;
+    };
+
+    match inode.borrow().deref() {
+      INode::Folder { .. } => {
+        reply.error(EISDIR);
+        return;
+      }
+      INode::File { target, .. } => {
+        let binding = target.clone();
+        self.runtime.spawn(async move {
+          match Self::read(&binding, offset, size).await {
+            Ok(data) => {
+              reply.data(&data);
+            }
+            Err(err) => {
+              error!("Failed to read {}: {}", binding, err);
+              reply.error(EIO)
+            }
+          }
+        });
+      }
+    };
   }
 
   fn readdir(
