@@ -8,11 +8,13 @@ use crate::mapping::Path;
 pub enum INode {
   File {
     ino: u64,
+    parent: u64,
     name: String,
     target: String,
   },
   Folder {
     ino: u64,
+    parent: u64,
     name: String,
     entries: BTreeMap<String, Rc<RefCell<INode>>>
   },
@@ -52,6 +54,32 @@ impl INode {
       INode::Folder { ino: i, .. } => *i = ino,
     }
   }
+
+  fn set_parent(&mut self, parent: u64) {
+    match self {
+      INode::File { parent: p, .. } => *p = parent,
+      INode::Folder { parent: p, .. } => *p = parent,
+    }
+  }
+
+  pub fn get_parent(&self) -> u64 {
+    match self {
+      INode::File { parent, .. } => *parent,
+      INode::Folder { parent, .. } => *parent,
+    }
+  }
+
+  fn auto_set_parent(&mut self, parent: u64) {
+    self.set_parent(parent);
+    match self {
+      INode::File { .. } => {}
+      INode::Folder { ino, entries, .. } => {
+        for (_, entry) in entries {
+          entry.borrow_mut().auto_set_parent(*ino);
+        }
+      }
+    }
+  }
 }
 
 impl From<Path> for INode {
@@ -59,6 +87,7 @@ impl From<Path> for INode {
     match value {
       Path::File { name, path } => INode::File {
         ino: 0,
+        parent: 0,
         name,
         target: path,
       },
@@ -69,6 +98,7 @@ impl From<Path> for INode {
         }
         INode::Folder {
           ino: 0,
+          parent: 0,
           name,
           entries,
         }
@@ -132,6 +162,8 @@ impl From<Rc<RefCell<INode>>> for INodeTable {
       inode.borrow_mut().set_ino(idx as u64 + 1)
     }
 
+    root.borrow_mut().auto_set_parent(0);
+
     INodeTable {
       root: root.clone(),
       table,
@@ -148,31 +180,37 @@ mod tests {
   fn fake_inode_tree() -> INode {
     let hosts = Rc::new(RefCell::new(INode::File {
       ino: 0,
+      parent: 0,
       name: String::from("hosts"),
       target: String::from("/etc/hosts"),
     }));
     let passwd = Rc::new(RefCell::new(INode::File {
       ino: 0,
+      parent: 0,
       name: String::from("passwd"),
       target: String::from("/etc/passwd"),
     }));
     let shadow = Rc::new(RefCell::new(INode::File {
       ino: 0,
+      parent: 0,
       name: String::from("shadow"),
       target: String::from("/etc/shadow"),
     }));
     let group = Rc::new(RefCell::new(INode::File {
       ino: 0,
+      parent: 0,
       name: String::from("group"),
       target: String::from("/etc/group"),
     }));
     let subfile = Rc::new(RefCell::new(INode::File {
       ino: 0,
+      parent: 0,
       name: String::from("subfile"),
       target: String::from("/etc/subfile"),
     }));
     let subfolder = Rc::new(RefCell::new(INode::Folder {
       ino: 0,
+      parent: 0,
       name: String::from("subfolder"),
       entries: {
         let mut es = BTreeMap::new();
@@ -183,6 +221,7 @@ mod tests {
 
     let etc = Rc::new(RefCell::new(INode::Folder {
       ino: 0,
+      parent: 0,
       name: String::from("etc"),
       entries: {
         let mut es = BTreeMap::new();
@@ -196,6 +235,7 @@ mod tests {
     }));
     INode::Folder {
       ino: 0,
+      parent: 0,
       name: String::from("/"),
       entries: {
         let mut es = BTreeMap::new();

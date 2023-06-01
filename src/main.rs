@@ -44,24 +44,6 @@ const HELLO_DIR_ATTR: FileAttr = FileAttr {
 
 const HELLO_TXT_CONTENT: &str = "Hello World!\n";
 
-const HELLO_TXT_ATTR: FileAttr = FileAttr {
-  ino: 2,
-  size: 13,
-  blocks: 1,
-  atime: UNIX_EPOCH, // 1970-01-01 00:00:00
-  mtime: UNIX_EPOCH,
-  ctime: UNIX_EPOCH,
-  crtime: UNIX_EPOCH,
-  kind: FileType::RegularFile,
-  perm: 0o644,
-  nlink: 1,
-  uid: 501,
-  gid: 20,
-  rdev: 0,
-  flags: 0,
-  blksize: 512,
-};
-
 struct MappingFS {
   runtime: Runtime,
   inode_table: INodeTable,
@@ -207,9 +189,32 @@ impl Filesystem for MappingFS {
       return;
     };
 
-    debug!("readdir(ino={}): {:?}", ino, inode.borrow().get_name());
+    debug!("readdir(ino={}): {:?}", ino, inode.clone().borrow().get_name());
 
-    for (i, entry) in inode.list_current().iter().enumerate().skip(offset as usize) {
+    let curr = inode.borrow();
+    let mut files = vec![
+      Rc::new(RefCell::new(INode::Folder {
+        ino: curr.get_ino(),
+        parent: curr.get_parent(),
+        name: ".".to_string(),
+        entries: Default::default(),
+      }))
+    ];
+
+    if let Some(parent) = self.inode_table.get_by_ino(inode.borrow().get_parent()) {
+      let parent_ref = parent.borrow();
+      let parent_folder = Rc::new(RefCell::new(INode::Folder {
+        ino: parent_ref.get_ino(),
+        parent: parent_ref.get_parent(),
+        name: "..".to_string(),
+        entries: Default::default(),
+      }));
+      files.push(parent_folder);
+    }
+
+    files.append(&mut inode.list_current());
+
+    for (i, entry) in files.iter().enumerate().skip(offset as usize) {
       let file = entry.borrow();
       let ret = match file.deref() {
         INode::File { name, .. } => {
