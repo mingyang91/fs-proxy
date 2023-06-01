@@ -68,8 +68,8 @@ struct MappingFS {
 }
 
 impl MappingFS {
-  fn new(runtime: Runtime, mapping: mapping::Path) -> Self {
-    let root: Rc<RefCell<INode>> = mapping.into();
+  fn new(runtime: Runtime, mapping: Path) -> Self {
+    let root: Rc<RefCell<INode>> = Rc::new(RefCell::new(mapping.into()));
     Self {
       runtime,
       inode_table: INodeTable::from(root),
