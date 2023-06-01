@@ -1,10 +1,10 @@
-use std::cell::RefCell;
+use std::cell::{Ref, RefCell};
 use std::collections::{BTreeMap, LinkedList};
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
 use fuser::FileType;
 
-
+#[derive(Debug)]
 enum INode {
   File {
     ino: u64,
@@ -31,11 +31,44 @@ impl INode {
       }
     }
   }
+
+  fn set_ino(&mut self, ino: u64) {
+    match self {
+      INode::File { ino: i, .. } => *i = ino,
+      INode::Folder { ino: i, .. } => *i = ino,
+    }
+  }
 }
 
+trait INodeOps {
+  fn list(&self) -> Vec<Rc<RefCell<INode>>>;
+}
+
+impl INodeOps for Rc<RefCell<INode>> {
+  fn list(&self) -> Vec<Rc<RefCell<INode>>> {
+    match self.borrow().deref() {
+      INode::File { .. } => vec![self.clone()],
+      INode::Folder { entries, .. } => {
+        entries.values()
+          .flat_map(|entry| match *entry.borrow() {
+            INode::File { .. } => vec![entry.clone()],
+            INode::Folder { .. } => {
+              let mut files = entry.clone().list();
+              files.push(entry.clone());
+              files
+            },
+          })
+          .collect()
+      }
+    }
+  }
+}
+
+
+#[derive(Debug)]
 struct INodeTable {
-  root: Rc<RefCell<INode>>,
   table: Vec<Rc<RefCell<INode>>>,
+  root: Rc<RefCell<INode>>,
 }
 
 impl INodeTable {
@@ -46,61 +79,52 @@ impl INodeTable {
       entries: BTreeMap::new(),
     }));
     INodeTable {
-      root: root.clone(),
-      table: vec![root],
+      table: vec![root.clone()],
+      root,
     }
   }
 
   fn from(root: Rc<RefCell<INode>>) -> Self {
-    let mut stack = LinkedList::new();
-    stack.push_back(root.clone());
-    let mut collect = LinkedList::new();
-    while let Some(current) = stack.pop_back() {
-      collect.push_back(current.clone());
-      match &*current.borrow() {
-        INode::File { .. } => {}
-        INode::Folder { entries, .. } => {
-          for (_, entry) in entries {
-            stack.push_back(entry.clone());
-          }
-        }
-      }
+    let mut table = root.list();
+    for (idx, inode) in table.iter().enumerate() {
+      inode.borrow_mut().set_ino(idx as u64)
     }
+
     INodeTable {
       root: root.clone(),
-      table: collect.into_iter().collect(),
+      table: table,
     }
   }
 }
 
 fn fake_inode_tree() -> INode {
   let mut hosts = Rc::new(RefCell::new(INode::File {
-    ino: 3,
+    ino: 0,
     name: String::from("hosts"),
     target: String::from("/etc/hosts"),
   }));
   let mut passwd = Rc::new(RefCell::new(INode::File {
-    ino: 4,
+    ino: 0,
     name: String::from("passwd"),
     target: String::from("/etc/passwd"),
   }));
   let mut shadow = Rc::new(RefCell::new(INode::File {
-    ino: 5,
+    ino: 0,
     name: String::from("shadow"),
     target: String::from("/etc/shadow"),
   }));
   let mut group = Rc::new(RefCell::new(INode::File {
-    ino: 6,
+    ino: 0,
     name: String::from("group"),
     target: String::from("/etc/group"),
   }));
   let mut subfile = Rc::new(RefCell::new(INode::File {
-    ino: 8,
+    ino: 0,
     name: String::from("subfile"),
     target: String::from("/etc/subfile"),
   }));
   let mut subfolder = Rc::new(RefCell::new(INode::Folder {
-    ino: 7,
+    ino: 0,
     name: String::from("subfolder"),
     entries: {
       let mut es = BTreeMap::new();
@@ -110,7 +134,7 @@ fn fake_inode_tree() -> INode {
   }));
 
   let mut etc = Rc::new(RefCell::new(INode::Folder {
-    ino: 2,
+    ino: 0,
     name: String::from("etc"),
     entries: {
       let mut es = BTreeMap::new();
@@ -123,7 +147,7 @@ fn fake_inode_tree() -> INode {
     },
   }));
   INode::Folder {
-    ino: 1,
+    ino: 0,
     name: String::from("/"),
     entries: {
       let mut es = BTreeMap::new();
@@ -137,4 +161,6 @@ fn fake_inode_tree() -> INode {
 fn test () {
   let root = Rc::new(RefCell::new(fake_inode_tree()));
 
+  let table = INodeTable::from(root);
+  println!("list_files: {:?}", table);
 }
