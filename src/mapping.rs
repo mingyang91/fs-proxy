@@ -1,63 +1,12 @@
-#![feature(generators, generator_trait)]
-
-use std::collections::{HashMap, LinkedList};
-use std::collections::hash_map::Iter;
-use std::ops::Index;
-use std::vec::IntoIter;
+use std::collections::HashMap;
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
 pub(crate) enum Path {
-  File { path: String },
-  Folder { paths: HashMap<String, Path> },
+  File { name: String, path: String },
+  Folder { name: String, paths: HashMap<String, Path> },
 }
-
-struct PathIter<'a> {
-  stack: LinkedList<Iter<'a, String, Path>>,
-}
-
-impl Path {
-  fn iter(&self) -> PathIter {
-    match self {
-      Path::File { .. } => {
-        PathIter {
-          stack: LinkedList::new(),
-        }
-      }
-      Path::Folder { paths } => {
-        PathIter {
-          stack: {
-            let mut list = LinkedList::new();
-            list.push_back(paths.iter());
-            list
-          },
-        }
-      }
-    }
-
-  }
-  fn lookup(&self, name: &Vec<String>) -> Option<String> {
-    match self {
-      Path::File { path } => {
-        if name.is_empty() {
-          Some(path.clone())
-        } else {
-          None
-        }
-      }
-      Path::Folder { paths } => {
-        if let Some(path) = paths.get(&name[0]) {
-          let tail = name[1..].to_vec();
-          path.lookup(&tail)
-        } else {
-          None
-        }
-      }
-    }
-  }
-}
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub(crate) struct MappingConfig {
@@ -68,23 +17,43 @@ fn fake_mapping() -> MappingConfig {
   MappingConfig {
     mapping: {
       let mut root = HashMap::new();
-      root.insert("folder1".to_string(), Path::Folder {
+      let folder1_name = "folder1".to_string();
+      root.insert(folder1_name.clone(), Path::Folder {
+        name: folder1_name,
         paths: {
+          let name = "d1f1.txt".to_string();
           let mut folder1 = HashMap::new();
-          folder1.insert("d1f1.txt".to_string(), Path::File { path: "/tmp/hello.txt".to_string() });
+          folder1.insert(name.clone(), Path::File {
+            name,
+            path: "/tmp/hello.txt".to_string()
+          });
           folder1
         }
       });
-      root.insert("folder2".to_string(), Path::Folder {
+      let folder2_name = "folder2".to_string();
+      root.insert(folder2_name.clone(), Path::Folder {
+        name: folder2_name,
         paths: {
           let mut folder2 = HashMap::new();
-          folder2.insert("d2f1.txt".to_string(), Path::File { path: "/tmp/hello.txt".to_string() });
-          folder2.insert("d2f2.txt".to_string(), Path::File { path: "/tmp/hello.txt".to_string() });
+          let d2f1_name = "d2f1.txt".to_string();
+          folder2.insert(d2f1_name.clone(), Path::File {
+            name: d2f1_name,
+            path: "/tmp/hello.txt".to_string()
+          });
+          let d2f2_name = "d2f2.txt".to_string();
+          folder2.insert(d2f2_name.clone(), Path::File {
+            name: d2f2_name,
+            path: "/tmp/hello.txt".to_string()
+          });
           folder2
         }
       });
-      root.insert("file1.txt".to_string(), Path::File { path: "/tmp/hello.txt".to_string() });
-      Path::Folder { paths: root }
+      let file1_name = "file1.txt".to_string();
+      root.insert(file1_name.clone(), Path::File {
+        name: file1_name,
+        path: "/tmp/hello.txt".to_string()
+      });
+      Path::Folder { name: "/".to_string(), paths: root }
     }
   }
 }
@@ -96,23 +65,4 @@ fn test_serde() {
   println!("serialized = {}", serialized);
   let deserialized: MappingConfig = serde_json::from_str(&serialized).unwrap();
   println!("deserialized = {:?}", deserialized);
-}
-
-#[test]
-fn test_lookup() {
-  let mapping = fake_mapping();
-  let path = mapping.mapping.lookup(&vec!["folder1".to_string(), "d1f1.txt".to_string()]);
-  println!("path = {:?}", path);
-  assert!(path.is_some(), "path should be Some");
-  assert_eq!(path.unwrap(), "/tmp/hello.txt", "path should be /tmp/hello.txt");
-  let path2 = mapping.mapping.lookup(&vec!["folder1".to_string(), "d1f2.txt".to_string()]);
-  println!("path2 = {:?}", path2);
-  assert!(path2.is_none(), "path2 should be None");
-}
-
-#[test]
-fn test_iter() {
-  let mapping = fake_mapping();
-  let mut iter = mapping.mapping.iter();
-
 }

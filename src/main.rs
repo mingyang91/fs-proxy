@@ -2,20 +2,24 @@ mod args;
 mod mapping;
 mod inode;
 
-use std::collections::{HashMap, LinkedList};
+use std::cell::RefCell;
 use clap::{Parser};
 use fuser::{
   FileAttr, FileType, Filesystem, MountOption, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry,
   Request,
 };
-use libc::ENOENT;
+use libc::{EIO, ENOENT};
 use std::ffi::OsStr;
-use std::ops::Add;
+use std::io::Error;
+use std::ops::{Add, Deref};
 use std::os::unix::fs::MetadataExt;
-use std::time;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::rc::Rc;
+use std::time::{Duration, UNIX_EPOCH};
 use crate::args::Args;
 use tokio;
+use tokio::runtime::Handle;
+use log::{error};
+use crate::inode::{INode, INodeTable};
 use crate::mapping::Path;
 
 const TTL: Duration = Duration::from_secs(1); // 1 second
@@ -59,15 +63,17 @@ const HELLO_TXT_ATTR: FileAttr = FileAttr {
 };
 
 struct MappingFS {
-  mapping: Path,
+  inode_table: INodeTable,
 }
 
 impl MappingFS {
   fn new(mapping: Path) -> Self {
-    Self { mapping }
+    Self {
+      inode_table: INodeTable::from(Rc::new(RefCell::new(INode::from(mapping))))
+    }
   }
 
-  async fn getattr(name: String) -> Result<FileAttr, std::io::Error> {
+  async fn getattr(name: &String) -> Result<FileAttr, std::io::Error> {
     let file = tokio::fs::File::open(name).await?;
     let metadata = file.metadata().await?;
     let kind = if metadata.is_dir() {
@@ -99,12 +105,15 @@ impl MappingFS {
     };
     Ok(attr)
   }
+
+  fn getattr_sync(name: &String) -> Result<FileAttr, Error> {
+    Handle::current().block_on(Self::getattr(name))
+  }
 }
 
 impl From<mapping::MappingConfig> for MappingFS {
   fn from(mapping: mapping::MappingConfig) -> Self {
-    let mut mapping_fs = Self::new(mapping.mapping);
-    mapping_fs
+    Self::new(mapping.mapping)
   }
 }
 
@@ -114,20 +123,29 @@ impl Filesystem for MappingFS {
       reply.error(ENOENT);
       return;
     };
-    let Path::Folder { paths } = &self.mapping else {
-      reply.error(ENOENT);
-      return;
-    };
-    let Some(destination) = paths.get(filename) else {
-      reply.error(ENOENT);
-      return;
-    };
-    match destination {
-      Path::File { path } => {
-        reply.entry(&TTL, &HELLO_TXT_ATTR, 0);
+    let res = self.inode_table.lookup(parent, filename.to_string());
+    match res {
+      Some(inode) => {
+        match inode.borrow().deref() {
+          INode::File { target, .. } => {
+            match MappingFS::getattr_sync(target) {
+              Ok(attr) => {
+                reply.entry(&TTL, &attr, 0);
+              }
+              Err(err) => {
+                error!("Failed to get attr for {}: {}", target, err);
+                reply.error(EIO)
+              }
+            }
+
+          }
+          INode::Folder { .. } => {
+            reply.entry(&TTL, &HELLO_DIR_ATTR, 0);
+          }
+        }
       }
-      Path::Folder { paths } => {
-        reply.entry(&TTL, &HELLO_DIR_ATTR, 0);
+      None => {
+        reply.error(ENOENT);
       }
     }
   }
