@@ -23,5 +23,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt update && apt install fuse -y
 
 COPY --from=builder /app/target/release/fs-proxy /app/fs-proxy
+COPY res /app/res
 WORKDIR /app
-CMD ["./fs-proxy"]
+RUN mkdir /mnt/fs-proxy
+ENV RUST_LOG=debug
+CMD ["./fs-proxy", "--mapping-file", "/app/res/mapping-tree.json", "/mnt/fs-proxy"]

@@ -17,9 +17,9 @@ use std::rc::Rc;
 use std::time::{Duration, UNIX_EPOCH};
 use crate::args::Args;
 use tokio;
-use tokio::runtime::Handle;
-use log::{error};
-use crate::inode::{INode, INodeTable};
+use tokio::runtime::{Runtime};
+use log::{debug, error};
+use crate::inode::{INode, INodeOps, INodeTable};
 use crate::mapping::Path;
 
 const TTL: Duration = Duration::from_secs(1); // 1 second
@@ -63,13 +63,16 @@ const HELLO_TXT_ATTR: FileAttr = FileAttr {
 };
 
 struct MappingFS {
+  runtime: Runtime,
   inode_table: INodeTable,
 }
 
 impl MappingFS {
-  fn new(mapping: Path) -> Self {
+  fn new(runtime: Runtime, mapping: mapping::Path) -> Self {
+    let root: Rc<RefCell<INode>> = mapping.into();
     Self {
-      inode_table: INodeTable::from(Rc::new(RefCell::new(INode::from(mapping))))
+      runtime,
+      inode_table: INodeTable::from(root),
     }
   }
 
@@ -106,19 +109,14 @@ impl MappingFS {
     Ok(attr)
   }
 
-  fn getattr_sync(name: &String) -> Result<FileAttr, Error> {
-    Handle::current().block_on(Self::getattr(name))
-  }
-}
-
-impl From<mapping::MappingConfig> for MappingFS {
-  fn from(mapping: mapping::MappingConfig) -> Self {
-    Self::new(mapping.mapping)
+  fn getattr_sync(&self, name: &String) -> Result<FileAttr, Error> {
+    self.runtime.block_on(Self::getattr(name))
   }
 }
 
 impl Filesystem for MappingFS {
   fn lookup(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: ReplyEntry) {
+    debug!("lookup called with parent={}, name={:?}", parent, name);
     let Some(filename) = name.to_str() else {
       reply.error(ENOENT);
       return;
@@ -128,7 +126,8 @@ impl Filesystem for MappingFS {
       Some(inode) => {
         match inode.borrow().deref() {
           INode::File { target, .. } => {
-            match MappingFS::getattr_sync(target) {
+            debug!("lookup: found file {} -> {}", filename, target);
+            match self.getattr_sync(target) {
               Ok(attr) => {
                 reply.entry(&TTL, &attr, 0);
               }
@@ -140,6 +139,7 @@ impl Filesystem for MappingFS {
 
           }
           INode::Folder { .. } => {
+            debug!("lookup: found folder {}", filename);
             reply.entry(&TTL, &HELLO_DIR_ATTR, 0);
           }
         }
@@ -151,11 +151,27 @@ impl Filesystem for MappingFS {
   }
 
   fn getattr(&mut self, _req: &Request, ino: u64, reply: ReplyAttr) {
-    match ino {
-      1 => reply.attr(&TTL, &HELLO_DIR_ATTR),
-      2 => reply.attr(&TTL, &HELLO_TXT_ATTR),
-      _ => reply.error(ENOENT),
-    }
+    let Some(inode) = self.inode_table.get_by_ino(ino) else {
+      reply.error(ENOENT);
+      return;
+    };
+
+    match inode.borrow().deref() {
+      INode::File { target, .. } => {
+        match self.getattr_sync(target) {
+          Ok(attr) => {
+            reply.attr(&TTL, &attr);
+          }
+          Err(err) => {
+            error!("Failed to get attr for {}: {}", target, err);
+            reply.error(EIO)
+          }
+        }
+      }
+      INode::Folder { .. } => {
+        reply.attr(&TTL, &HELLO_DIR_ATTR);
+      }
+    };
   }
 
   fn read(
@@ -184,34 +200,38 @@ impl Filesystem for MappingFS {
     offset: i64,
     mut reply: ReplyDirectory,
   ) {
-    if ino != 1 {
+    debug!("readdir(ino={}, offset={})", ino, offset);
+    let Some(inode) = self.inode_table.get_by_ino(ino) else {
+      debug!("readdir(ino={}): ENOENT", ino);
       reply.error(ENOENT);
       return;
+    };
+
+    debug!("readdir(ino={}): {:?}", ino, inode.borrow().get_name());
+
+    for (i, entry) in inode.list_current().iter().enumerate().skip(offset as usize) {
+      let file = entry.borrow();
+      let ret = match file.deref() {
+        INode::File { name, .. } => {
+          debug!("file[{}]: {:?}", i, entry.borrow().get_name());
+          reply.add(file.get_ino(), (i + 1) as i64, FileType::RegularFile, name)
+        },
+        INode::Folder { name, .. } => {
+          debug!("folder[{}]: {:?}", i, entry.borrow().get_name());
+          reply.add(file.get_ino(), (i + 1) as i64, FileType::Directory, name)
+        },
+      };
+
+      if ret {
+        break;
+      }
     }
 
-    let entries = vec![
-      (1, FileType::Directory, "."),
-      (1, FileType::Directory, ".."),
-      (2, FileType::RegularFile, "hello.txt"),
-    ];
-
-    // for (i, entry) in self.mapping.into_iter().enumerate().skip(offset as usize) {
-    //   // i + 1 means the index of the next entry
-    //   let (name, dest) = entry;
-    //   let kind = match dest {
-    //     Path::File { path } => FileType::RegularFile,
-    //     Path::Folder { paths } => FileType::Directory,
-    //   };
-    //   if reply.add(1, (i + 1) as i64, kind, name) {
-    //     break;
-    //   }
-    // }
     reply.ok();
   }
 }
 
-#[tokio::main]
-async fn main() {
+fn main() {
   env_logger::init();
   let args = Args::parse();
 
@@ -223,9 +243,13 @@ async fn main() {
     options.push(MountOption::AllowRoot);
   }
 
-  let mapping_file = tokio::fs::File::open(args.mapping_file).await.unwrap();
-  let rdr = std::io::BufReader::new(mapping_file.into_std().await);
-  let mut config: mapping::MappingConfig = serde_json::from_reader(rdr).unwrap();
-  let mapping_fs = MappingFS::from(config);
+  let config = read_mapping_file(&args);
+  let mapping_fs = MappingFS::new(Runtime::new().unwrap(), config);
   fuser::mount2(mapping_fs, args.mountpoint, &options).unwrap();
+}
+
+fn read_mapping_file(args: &Args) -> Path {
+  let mapping_file = std::fs::File::open(&args.mapping_file).unwrap();
+  let rdr = std::io::BufReader::new(mapping_file);
+  serde_json::from_reader(rdr).unwrap()
 }

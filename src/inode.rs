@@ -32,6 +32,13 @@ impl INode {
     }
   }
 
+  pub fn get_name(&self) -> &String {
+    match self {
+      INode::File { name, .. } => name,
+      INode::Folder { name, .. } => name,
+    }
+  }
+
   pub fn get_ino(&self) -> u64 {
     match self {
       INode::File { ino, .. } => *ino,
@@ -70,7 +77,7 @@ impl From<Path> for INode {
   }
 }
 
-trait INodeOps {
+pub trait INodeOps {
   fn list_recursively(&self) -> Vec<Rc<RefCell<INode>>>;
   fn list_current(&self) -> Vec<Rc<RefCell<INode>>>;
 }
@@ -80,10 +87,11 @@ impl INodeOps for Rc<RefCell<INode>> {
     match self.borrow().deref() {
       INode::File { .. } => vec![self.clone()],
       INode::Folder { entries, .. } => {
-        let mut res: Vec<Rc<RefCell<INode>>> = entries.values()
+        let mut res = vec![self.clone()];
+        let mut deep: Vec<Rc<RefCell<INode>>> = entries.values()
           .flat_map(|entry| entry.list_recursively())
           .collect();
-        res.push(self.clone());
+        res.append(&mut deep);
         res
       }
     }
@@ -108,8 +116,12 @@ pub struct INodeTable {
 
 impl INodeTable {
   pub fn lookup(&self, ino: u64, name: String) -> Option<Rc<RefCell<INode>>> {
-    self.table.get(ino as usize)
+    self.table.get(ino as usize - 1)
       .and_then(|inode| inode.borrow().lookup(name))
+  }
+
+  pub fn get_by_ino(&self, ino: u64) -> Option<Rc<RefCell<INode>>> {
+    self.table.get(ino as usize - 1).cloned()
   }
 }
 
@@ -117,7 +129,7 @@ impl From<Rc<RefCell<INode>>> for INodeTable {
   fn from(root: Rc<RefCell<INode>>) -> Self {
     let table = root.list_recursively();
     for (idx, inode) in table.iter().enumerate() {
-      inode.borrow_mut().set_ino(idx as u64)
+      inode.borrow_mut().set_ino(idx as u64 + 1)
     }
 
     INodeTable {
