@@ -1,5 +1,6 @@
 mod args;
 mod mapping;
+mod inode;
 
 use std::collections::{HashMap, LinkedList};
 use clap::{Parser};
