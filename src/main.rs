@@ -58,7 +58,7 @@ impl MappingFS {
     }
   }
 
-  async fn getattr(name: &String) -> Result<FileAttr, std::io::Error> {
+  async fn getattr(name: &String) -> Result<FileAttr, Error> {
     let file = tokio::fs::File::open(name).await?;
     let metadata = file.metadata().await?;
     let kind = if metadata.is_dir() {
@@ -96,6 +96,26 @@ impl MappingFS {
   }
 }
 
+fn make_folder_attr(inode: &INode) -> FileAttr {
+  FileAttr {
+    ino: inode.get_ino(),
+    size: 0,
+    blocks: 0,
+    atime: UNIX_EPOCH, // 1970-01-01 00:00:00
+    mtime: UNIX_EPOCH,
+    ctime: UNIX_EPOCH,
+    crtime: UNIX_EPOCH,
+    kind: FileType::Directory,
+    perm: 0o755,
+    nlink: 2,
+    uid: 501,
+    gid: 20,
+    rdev: 0,
+    flags: 0,
+    blksize: 512,
+  }
+}
+
 impl Filesystem for MappingFS {
   fn lookup(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: ReplyEntry) {
     debug!("lookup called with parent={}, name={:?}", parent, name);
@@ -122,7 +142,8 @@ impl Filesystem for MappingFS {
           }
           INode::Folder { .. } => {
             debug!("lookup: found folder {}", filename);
-            reply.entry(&TTL, &HELLO_DIR_ATTR, 0);
+            let attr = make_folder_attr(&*inode.borrow());
+            reply.entry(&TTL, &attr, 0);
           }
         }
       }
