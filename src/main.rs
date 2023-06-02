@@ -3,6 +3,7 @@ mod mapping;
 mod inode;
 
 use std::cell::RefCell;
+use std::cmp::min;
 use std::collections::BTreeMap;
 use clap::{Parser};
 use fuser::{FileAttr, FileType, Filesystem, MountOption, ReplyAttr, ReplyData, ReplyDirectory, ReplyEntry, Request, ReplyOpen, ReplyEmpty};
@@ -253,6 +254,16 @@ impl Filesystem for MappingFS {
       let file_clone = arc_file.clone();
       let mut file = file_clone.lock().await;
 
+      let file_size = match file.metadata().await {
+        Ok(metadata) => metadata.len(),
+        Err(err) => {
+          error!("Failed to get metadata for file handle {}: {}", _fh, err);
+          reply.error(libc::EIO);
+          return;
+        }
+      };
+
+      let read_size = min(size, file_size.saturating_sub(offset as u64) as u32);
 
       if let Err(err) = file.seek(SeekFrom::Start(offset as u64)).await {
         error!("Failed to seek file handle {}: {}", _fh, err);
@@ -260,7 +271,7 @@ impl Filesystem for MappingFS {
         return;
       };
 
-      let mut buf = vec![0; size as usize];
+      let mut buf = vec![0; read_size as usize];
       if let Err(err) = file.read_exact(&mut buf).await {
         error!("Failed to read file handle {}: {}", _fh, err);
         reply.error(libc::EIO);
