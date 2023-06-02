@@ -74,7 +74,7 @@ impl Inner {
 struct MappingFS {
   runtime: Runtime,
   inode_table: INodeTable,
-  inner: Arc<Mutex<Inner>>
+  inner: Arc<Mutex<Inner>>,
 }
 
 impl MappingFS {
@@ -85,8 +85,8 @@ impl MappingFS {
       inode_table: INodeTable::from(root),
       inner: Arc::new(Mutex::new(Inner {
         file_handles: Default::default(),
-        counter: 0
-      }))
+        counter: 0,
+      })),
     }
   }
 
