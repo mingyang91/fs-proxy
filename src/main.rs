@@ -377,7 +377,7 @@ fn main() {
   env_logger::init();
   let args = Args::parse();
 
-  let mut options = vec![MountOption::RO, MountOption::FSName("hello".to_string())];
+  let mut options = vec![MountOption::RO, MountOption::FSName("fs-proxy".to_string())];
   if args.auto_unmount {
     options.push(MountOption::AutoUnmount);
   }

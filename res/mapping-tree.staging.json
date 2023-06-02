@@ -1,0 +1,614 @@
+{
+  "type": "Folder",
+  "name": "/",
+  "paths": {
+    "autobot_install_package": {
+      "type": "Folder",
+      "name": "autobot_install_package",
+      "paths": {
+        "output": {
+          "type": "Folder",
+          "name": "output",
+          "paths": {
+            "modules": {
+              "type": "Folder",
+              "name": "modules",
+              "paths": {
+                "dreamview": {
+                  "type": "Folder",
+                  "name": "dreamview",
+                  "paths": {
+                    "conf": {
+                      "type": "Folder",
+                      "name": "conf",
+                      "paths": {
+                        "camera_to_lidar_preprocess_table.pb.txt": {
+                          "type": "File",
+                          "name": "camera_to_lidar_preprocess_table.pb.txt",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/f91d95f57f88a9318e88add940ffd359443041160324dd7644eb482babf54bdf"
+                        },
+                        "data_collection_table.pb.txt": {
+                          "type": "File",
+                          "name": "data_collection_table.pb.txt",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/916b81f1c7b0885990983f45fa9c98adf08b2b9c14387859e59684b2a682d763"
+                        },
+                        "dreamview.conf": {
+                          "type": "File",
+                          "name": "dreamview.conf",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d9c08f9d9f392de79524f00032c5cb12a77c9587b86c30edbe716dd4b4e02d11"
+                        },
+                        "dreamview_gflags.txt": {
+                          "type": "File",
+                          "name": "dreamview_gflags.txt",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/fea5d1cc0102ad38a3bb7c75c12f2225debf335e9b0785d58a0450485ef5ff6b"
+                        },
+                        "hmi_modes": {
+                          "type": "Folder",
+                          "name": "hmi_modes",
+                          "paths": {
+                            "camera-Lidar_sensor_calibration.pb.txt": {
+                              "type": "File",
+                              "name": "camera-Lidar_sensor_calibration.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/40c64c26f30db75127fc69d9721731d6c5189ff7509d125cace9e9533e8f6daa"
+                            },
+                            "console_teleop.pb.txt": {
+                              "type": "File",
+                              "name": "console_teleop.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/9d68b4aa2611f2a5742e0cedce4c0ce123f4a1334239bbe20016dc689dda5bb8"
+                            },
+                            "dev_kit_close_loop.pb.txt": {
+                              "type": "File",
+                              "name": "dev_kit_close_loop.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/2f44ab4c21094ee8d76863534109ba0af25bf90310abab1016e0e6098995a9d4"
+                            },
+                            "ipc2_mkz_close_loop.pb.txt": {
+                              "type": "File",
+                              "name": "ipc2_mkz_close_loop.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/f209102a821bbe21cb60ca2fda818d0f52e63883f7ed2a891e3fe57408397523"
+                            },
+                            "mkz_64beam.pb.txt": {
+                              "type": "File",
+                              "name": "mkz_64beam.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/0d718b9d4fb6bd6a1137ada7a08d4cdd289c786b541006e14e52b236bee33dc7"
+                            },
+                            "mkz_close_loop.pb.txt": {
+                              "type": "File",
+                              "name": "mkz_close_loop.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d7f8f841542edfb10c180a3ba3ee98e2c9a040d2e1a20e4a557b1fb2762b2377"
+                            },
+                            "mkz_lgsvl.pb.txt": {
+                              "type": "File",
+                              "name": "mkz_lgsvl.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/4bbb05feff0e604c9457d24164ab27768cd6d6f6d20188dcbaa5b1b0e1b91a67"
+                            },
+                            "mkz_standard_debug.pb.txt": {
+                              "type": "File",
+                              "name": "mkz_standard_debug.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/e7978a83101c469e53ab3ed4a21a2c3f6145c93088945d346a116d473f4414a4"
+                            },
+                            "mkz_standard_debug_smart_recorder.pb.txt": {
+                              "type": "File",
+                              "name": "mkz_standard_debug_smart_recorder.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/1b9a2d0ab1a20c55f1aa4b19c01933962007b5d43473d49ec6b2c9b5a86b7bd3"
+                            },
+                            "navigation.pb.txt": {
+                              "type": "File",
+                              "name": "navigation.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/979631c5cffd19e351f742ab1d023bf3ad74b45735dd9d43ae4eb7a2bbb37a3e"
+                            },
+                            "rtk.pb.txt": {
+                              "type": "File",
+                              "name": "rtk.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/cc3830f6aaab4a0c4a002847bfd8291a1ff983ef370b25ddfc3d9a0404057dec"
+                            },
+                            "vehicle_calibration.pb.txt": {
+                              "type": "File",
+                              "name": "vehicle_calibration.pb.txt",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/671b8f93a0d8cc0d93116b2322487a5fcac1824b6655f364d07770e19825de57"
+                            }
+                          }
+                        },
+                        "lidar_to_gnss_preprocess_table.pb.txt": {
+                          "type": "File",
+                          "name": "lidar_to_gnss_preprocess_table.pb.txt",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/a15c35358ad63a7ccbbd81b27020fa9debaa71b5d6048686f092c608fa1d2a0a"
+                        },
+                        "navigation_mode_default_end_way_point.txt": {
+                          "type": "File",
+                          "name": "navigation_mode_default_end_way_point.txt",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c2a1b97a0c13a82c1a508e6a424c3a84db60a69730e0525424e2d5f93b98f61f"
+                        },
+                        "vehicle_data.pb.txt": {
+                          "type": "File",
+                          "name": "vehicle_data.pb.txt",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d1a0b98dc0f4d9e92588a88d96527543a126611605e63b75f7d2c46de7be98f2"
+                        }
+                      }
+                    },
+                    "dreamview": {
+                      "type": "File",
+                      "name": "dreamview",
+                      "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c088ee6d7aa5a87542d3b71152c86d7dc9c516976352d6847736cc5895f66133"
+                    },
+                    "frontend": {
+                      "type": "Folder",
+                      "name": "frontend",
+                      "paths": {
+                        "dist": {
+                          "type": "Folder",
+                          "name": "dist",
+                          "paths": {
+                            "0.bundle.js": {
+                              "type": "File",
+                              "name": "0.bundle.js",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/1476ce63c2fcefe14bd99da265891f941075c7413ca36fb30bbe136158714aa3"
+                            },
+                            "0.bundle.js.map": {
+                              "type": "File",
+                              "name": "0.bundle.js.map",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/9c7db2fd7207058db83c5223c9318701f63a62bdc3f1432cc6b2451cc75ec8a8"
+                            },
+                            "086924bdd797c6de1ae692b0c77b9d63.obj": {
+                              "type": "File",
+                              "name": "086924bdd797c6de1ae692b0c77b9d63.obj",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/016a7aa06529eccb7a781273f5c818c4ed98d6356312b34345a9d5c19a982a71"
+                            },
+                            "0ccca57f7e42eacf63e554cdd686cc6c.obj": {
+                              "type": "File",
+                              "name": "0ccca57f7e42eacf63e554cdd686cc6c.obj",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/a338b4125e79ccbc34ff365622c547c9c9dab47e66aacd6f67c06aed21bd5dfe"
+                            },
+                            "1.bundle.js": {
+                              "type": "File",
+                              "name": "1.bundle.js",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/56272e6ffd6208779f0c6aea9781fc43c47e19d9ae221f076f4ae1a73f1351d2"
+                            },
+                            "1.bundle.js.map": {
+                              "type": "File",
+                              "name": "1.bundle.js.map",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/ab0adf6cd6aa03ec5a79857cc4782c2cc8a36451e6a00ccc7fa6d15cf457661b"
+                            },
+                            "2.bundle.js.map": {
+                              "type": "File",
+                              "name": "2.bundle.js.map",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/b0fef05ce9e88e9529e8a9c2a8f2a90c04eca9585f2787b2acf004a29fd34bc4"
+                            },
+                            "3.bundle.js": {
+                              "type": "File",
+                              "name": "3.bundle.js",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/cc654666f35cd2ac5466849d589737b8145dae226acda566a98d892a1f1db1b5"
+                            },
+                            "3cf985c76d7881290eab582318b90503.obj": {
+                              "type": "File",
+                              "name": "3cf985c76d7881290eab582318b90503.obj",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/dfe7447608dfcb92beab94a66d78c7c441c3691fc4cbf78a23fcf0eed8b1357a"
+                            },
+                            "4.bundle.js": {
+                              "type": "File",
+                              "name": "4.bundle.js",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/24d8226b34cb7348a02a9f0a4a874528d9668c06d0cdf44170ae40291edc1db7"
+                            },
+                            "6ef2d572d9b1f0dd69d69b47f105f30b.obj": {
+                              "type": "File",
+                              "name": "6ef2d572d9b1f0dd69d69b47f105f30b.obj",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/74a241e25254cd3dbae15c84298f136742f14c504c6279a659917fbc653448da"
+                            },
+                            "app.bundle.js.map": {
+                              "type": "File",
+                              "name": "app.bundle.js.map",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/a00f3b09207f2c9868df2255b56878e23e54832d9853eee6fe1cd5756752e13d"
+                            },
+                            "assets": {
+                              "type": "Folder",
+                              "name": "assets",
+                              "paths": {
+                                "12LHy9QD-b1krOSkDH776k.png": {
+                                  "type": "File",
+                                  "name": "12LHy9QD-b1krOSkDH776k.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c5e0db7a246e6c82e0d850706102c9223abafc133b507780263d24a1573a545d"
+                                },
+                                "13X30qVl1k3CMKyls9ZN2x.png": {
+                                  "type": "File",
+                                  "name": "13X30qVl1k3CMKyls9ZN2x.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/40f8e38784abe853527c2de43e103f7ed517a41942ac9a7b06d63a80ef9891fc"
+                                },
+                                "1Dj5Zkf_hz3HgEwRdXer91.png": {
+                                  "type": "File",
+                                  "name": "1Dj5Zkf_hz3HgEwRdXer91.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/11867888c84822c099c23c79d7e1087b780b1da9769acf2c16fb4d2c55e9c97d"
+                                },
+                                "1Eo3zPMjhpRBJY8UPDpYQQ.png": {
+                                  "type": "File",
+                                  "name": "1Eo3zPMjhpRBJY8UPDpYQQ.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/bac563d3f301d96df39ba59b71562ee69ee35dd0c33fe3292cdd9a7d3c945915"
+                                },
+                                "1FGzP7szJkL7fmm7Drr24j.png": {
+                                  "type": "File",
+                                  "name": "1FGzP7szJkL7fmm7Drr24j.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/a91114f186bbd239f8e159b3119f823e3de4c834d298f727fb804a8c56977162"
+                                },
+                                "1MqLBy7vqPW3xe5RaG9P6o.png": {
+                                  "type": "File",
+                                  "name": "1MqLBy7vqPW3xe5RaG9P6o.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d95558bf9e0af8118ac64c15f659988eb1c923b29b235e5d9d85395d2e5e6007"
+                                },
+                                "1RfWevuiMr7EeJc5TKxbj2.png": {
+                                  "type": "File",
+                                  "name": "1RfWevuiMr7EeJc5TKxbj2.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/92b4aa84a8a0ade0c73f9d38ba656bdbd6786603ac993def588a6854701f6590"
+                                },
+                                "1b0-kfgbCe942kvHFnSSr9.png": {
+                                  "type": "File",
+                                  "name": "1b0-kfgbCe942kvHFnSSr9.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/fe44263ac1a4e781cad2496fe9de73fa2a7feb08f9097fa42e699cc9e09e38f5"
+                                },
+                                "1iLUZmgMEXEtT6wLNBNtP1.png": {
+                                  "type": "File",
+                                  "name": "1iLUZmgMEXEtT6wLNBNtP1.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/95d5e345c6d7cb0963816f25df2d2ea1ec669734fb05c0cc68c30f693a15c89d"
+                                },
+                                "21spPxEvHhx8voGZRuxQ3O.png": {
+                                  "type": "File",
+                                  "name": "21spPxEvHhx8voGZRuxQ3O.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/df5a07d22e0362fb0126ac0da46b443ef37466f88218803d844f496ed8181767"
+                                },
+                                "22OHVlbCh_r7sZD_oEQ2gj.png": {
+                                  "type": "File",
+                                  "name": "22OHVlbCh_r7sZD_oEQ2gj.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d26156c5749f5cc2fb15fafe4a2e30d42a70e02c71bc3105c41b59af13bb091b"
+                                },
+                                "22bS_pKVGzu52Qz484f-TF.png": {
+                                  "type": "File",
+                                  "name": "22bS_pKVGzu52Qz484f-TF.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/697d84bf1a39985f2044379ad6dea1e0bc961022b48dc398a6eacc3675971e58"
+                                },
+                                "26GYFj0PnZ01JqnOJyxAM-.png": {
+                                  "type": "File",
+                                  "name": "26GYFj0PnZ01JqnOJyxAM-.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/6f0e559c94df825f95e15541ec8763a4fa19154b82b0ea9c58ed5cc35e914f40"
+                                },
+                                "2wcLzof7F5OgGKuE41jGVw.png": {
+                                  "type": "File",
+                                  "name": "2wcLzof7F5OgGKuE41jGVw.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/0ab278db156a4b244cb9f0afc0d69bf2f596a89ff903915f4c0fba85c82aab4f"
+                                },
+                                "3k52mlYk9uEcdET8iINnYv.png": {
+                                  "type": "File",
+                                  "name": "3k52mlYk9uEcdET8iINnYv.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/f5419a526fb008e3e074f06c6af885674ad36f2de684829fbd6c5bea806f20aa"
+                                },
+                                "3nshOdgMibbk4SR7gCGgt9.png": {
+                                  "type": "File",
+                                  "name": "3nshOdgMibbk4SR7gCGgt9.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/42be53a8b9e09369d2473d06e89f88b4c207885deee4775db1492ae9e3f31555"
+                                },
+                                "3pNlF6_HshLyzfoQQTj_DR.png": {
+                                  "type": "File",
+                                  "name": "3pNlF6_HshLyzfoQQTj_DR.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/f7755292065220b0121cecec4488b4a57aec204979c8850a6a6245517b956445"
+                                },
+                                "3rgGI-v09F05qLamzo0Mlf.png": {
+                                  "type": "File",
+                                  "name": "3rgGI-v09F05qLamzo0Mlf.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/1e1b96b2f74e462f4838ac406f2f2a0c1738655b465b1554ee4d639289defa0e"
+                                },
+                                "I7k1tIy5t_Vyz-PUZC8sL.png": {
+                                  "type": "File",
+                                  "name": "I7k1tIy5t_Vyz-PUZC8sL.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/5092aac8682af8f7e3b28cb665a6e6869c45e4a806620e95ae31478037f10d27"
+                                },
+                                "IJv6Z8XXTR_f9gv0pR3Ev.png": {
+                                  "type": "File",
+                                  "name": "IJv6Z8XXTR_f9gv0pR3Ev.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/1841a7465c27bc5a2234182f9d14d99affebcc6dd54858cef397b5e9ea576a0c"
+                                },
+                                "JE-P_lWycHMdXM6PD3aA3.png": {
+                                  "type": "File",
+                                  "name": "JE-P_lWycHMdXM6PD3aA3.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d2761707b74b3d01905bd8b5b75cfec425c60ed34f8d0814a0fb0e9386be1d1e"
+                                },
+                                "OnYzzrp48Wu94MR9Rct_a.png": {
+                                  "type": "File",
+                                  "name": "OnYzzrp48Wu94MR9Rct_a.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/46c7a763384b5c3d197cadea3b20567b1ceb84ea9982b6f60ba51cd4a5f4c0cf"
+                                },
+                                "RBvrAxl20JDUtv4BQajv-.png": {
+                                  "type": "File",
+                                  "name": "RBvrAxl20JDUtv4BQajv-.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d722c8dcfdcd26a980c8bfb9901daaca34b1af23fa66eda760c3beb69c3a5443"
+                                },
+                                "_aPFfSfr2W0ylCJQooxMh.png": {
+                                  "type": "File",
+                                  "name": "_aPFfSfr2W0ylCJQooxMh.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/affc303ddae09528bd1b2d8265093dab993fffc46e5b89cdfeb0c1310822cbac"
+                                },
+                                "cQGVQz4W_CET1VNG7zZBI.png": {
+                                  "type": "File",
+                                  "name": "cQGVQz4W_CET1VNG7zZBI.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/591d501794f5bfacff7ccd12240ddf58f4c609e1a64fa6dabe156f80011ef914"
+                                },
+                                "h-1G67ygdTlLxT4GuN1h7.png": {
+                                  "type": "File",
+                                  "name": "h-1G67ygdTlLxT4GuN1h7.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/ab7552ce71b6a335373933578f19f14fcf997a36c532af6c401857e8f3862429"
+                                },
+                                "lPih9mBDSWiuSwRE_iIyo.png": {
+                                  "type": "File",
+                                  "name": "lPih9mBDSWiuSwRE_iIyo.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/779bdc2f665435d8f2adaec6e0891f012b02bc467e6f5deb38b042208053ad93"
+                                },
+                                "o_BRPpUUiT_5Fyp0NniWM.png": {
+                                  "type": "File",
+                                  "name": "o_BRPpUUiT_5Fyp0NniWM.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/4072b9045209325464c048e7be9cf80a2222dc9f63d57b7bd6a72996230b0870"
+                                },
+                                "pUtkZLzIrAN2hyq__QhKw.png": {
+                                  "type": "File",
+                                  "name": "pUtkZLzIrAN2hyq__QhKw.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/b567d5f8abf7f2c7b2e04f7d99fef5f75373ce5c141d861f47793376a55f3bd3"
+                                },
+                                "q78tNf3Oyjk3c2T7aV2GJ.png": {
+                                  "type": "File",
+                                  "name": "q78tNf3Oyjk3c2T7aV2GJ.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/fcd96124aad40a1eb6ddbe811b0b12abe25bc66fff3b24dec372b5fd05271b58"
+                                }
+                              }
+                            },
+                            "c67591a7704dd9ff8b57ef65b6bd0521.mtl": {
+                              "type": "File",
+                              "name": "c67591a7704dd9ff8b57ef65b6bd0521.mtl",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/0cfe57af7e050e46f641bd2b3f6c6ec7ee69422686f354b436c61b5818003fea"
+                            },
+                            "fonts": {
+                              "type": "Folder",
+                              "name": "fonts",
+                              "paths": {
+                                "LICENSE": {
+                                  "type": "File",
+                                  "name": "LICENSE",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/18296c8acc17d5de9db2ff87327288a6a391d0e77db3ce8f01e0013058241283"
+                                },
+                                "README": {
+                                  "type": "File",
+                                  "name": "README",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/0a4ea048f434597ac2b6e6ac4269180f8caa48759ad4fda20871f36b3d244ccb"
+                                },
+                                "droid": {
+                                  "type": "Folder",
+                                  "name": "droid",
+                                  "paths": {
+                                    "README.txt": {
+                                      "type": "File",
+                                      "name": "README.txt",
+                                      "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c8b88077052fed912b3f724c0ed230c501cf4e18833af7ca44338d3cd0b093e2"
+                                    }
+                                  }
+                                },
+                                "gentilis_bold.typeface.json": {
+                                  "type": "File",
+                                  "name": "gentilis_bold.typeface.json",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c028fd9c4017e34f1bf46694e4c23479cd22b812d0308f5dfc7446412c41d88c"
+                                },
+                                "helvetiker_bold.typeface.json": {
+                                  "type": "File",
+                                  "name": "helvetiker_bold.typeface.json",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/bd68159ee0b8d10fe24b9daa2e32f19686f9d8269a79dc8d44203a66298bfa2f"
+                                },
+                                "helvetiker_regular.typeface.json": {
+                                  "type": "File",
+                                  "name": "helvetiker_regular.typeface.json",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d5c5467690f74061179a292af83bd85c4c551e0f106b2af99714f11184c96981"
+                                },
+                                "optimer_bold.typeface.json": {
+                                  "type": "File",
+                                  "name": "optimer_bold.typeface.json",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/d690a5f45706db0c15c39313cc36f8ce62ef154c6a21923809814a89f6df7c98"
+                                },
+                                "optimer_regular.typeface.json": {
+                                  "type": "File",
+                                  "name": "optimer_regular.typeface.json",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/17e5e14d94d66e0e60eed3bfde403fcfa3e677f3c914e4cbed264c0c0ba95175"
+                                }
+                              }
+                            },
+                            "icons": {
+                              "type": "Folder",
+                              "name": "icons",
+                              "paths": {
+                                "android-chrome-256x256.png": {
+                                  "type": "File",
+                                  "name": "android-chrome-256x256.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/db6c9d84d998429e29d78b18e543a9ed6b81016c6ee9af3db2278372cc114563"
+                                },
+                                "android-chrome-512x512.png": {
+                                  "type": "File",
+                                  "name": "android-chrome-512x512.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/9df5d7b5b253a08c7eb93137a5b3fbde491aa1652f66df3211fd03c2b43ac1a2"
+                                },
+                                "apple-touch-icon-114x114.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon-114x114.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/714b09c47528735605bb15ccfbf06b39ad0b97f5c66b51bc23c29d539698b506"
+                                },
+                                "apple-touch-icon-152x152.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon-152x152.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/caf951d7b87ee023ecdf5b62898d30c37810b6d1e829a0bcadb29a5ec48866f9"
+                                },
+                                "apple-touch-icon-180x180.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon-180x180.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/2b4b466b79699f95df1890d196b89fe5c3011fe2de82b963ca18202a8db53bef"
+                                },
+                                "apple-touch-icon-72x72.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon-72x72.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/8d403ed03718f588bb3e736692f7cd289afcd66f6d937392d586dfbeee621fa8"
+                                },
+                                "apple-touch-icon-76x76.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon-76x76.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/198149f4123967e12e0aa3cc049abdd5495d8a26aa5de2a55ff96eb870bd8115"
+                                },
+                                "apple-touch-icon-precomposed.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon-precomposed.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/2b4b466b79699f95df1890d196b89fe5c3011fe2de82b963ca18202a8db53bef"
+                                },
+                                "apple-touch-icon.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-icon.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/2b4b466b79699f95df1890d196b89fe5c3011fe2de82b963ca18202a8db53bef"
+                                },
+                                "apple-touch-startup-image-1136x640.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-1136x640.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/72220bf0e60d044d437f98d1e740387982ef26eea937860925c3733d3f9f82ca"
+                                },
+                                "apple-touch-startup-image-1182x2208.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-1182x2208.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/38a4e55165f0057fb162fbf5bc586b8c07354c90c42f88801638932b91f8e51c"
+                                },
+                                "apple-touch-startup-image-1242x2148.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-1242x2148.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/65ba2de5f220000ac51ef9ae42ebcb05b0439421f14c5e8c66ef698f542ad505"
+                                },
+                                "apple-touch-startup-image-1620x2160.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-1620x2160.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/77939e45c57b5ff17a3cc1f946c848ea0bf340bcde5dfba519b649a29b82271a"
+                                },
+                                "apple-touch-startup-image-1668x2224.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-1668x2224.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/21fa9a311d6fb2107aedbd3e6b311362cfa64adfd436b763b629d916c812a748"
+                                },
+                                "apple-touch-startup-image-2048x1536.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-2048x1536.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c7a9cda80b59b2776248dc260d07a679540983e2141c5aa265974692df3198db"
+                                },
+                                "apple-touch-startup-image-2208x1242.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-2208x1242.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/4be77aa5372ca6d83cbcae317cac84d2ee06f2fd061f240e16d6fb4132d0f62a"
+                                },
+                                "apple-touch-startup-image-2224x1668.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-2224x1668.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/141109f93e54375d1897a7651ffcad777516c0d5009575148be05486493d6512"
+                                },
+                                "apple-touch-startup-image-2436x1125.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-2436x1125.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/ccfe8a601e1e4368db2b95a8b8878ddd0de24a05f62859cd7d5f07dedf252a25"
+                                },
+                                "apple-touch-startup-image-640x1096.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-640x1096.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/902786e08d46bf60487d38a90b25d3cb9adf851c9227392d503ad5f4db20aa99"
+                                },
+                                "apple-touch-startup-image-640x920.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-640x920.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/8da6746d7ed259b189338e04d3a2db649f1b1960fae1ea218f668d93050c521b"
+                                },
+                                "apple-touch-startup-image-748x1024.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-748x1024.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c424d12590d4d940501bab688585bbbcf56ef0860ec2573d5ffc0efbe3a39bf3"
+                                },
+                                "apple-touch-startup-image-750x1334.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-750x1334.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/86e00d40a6320ec5dbf13f56725a086a1b348e9ebfdb293b43d475bc4644c546"
+                                },
+                                "apple-touch-startup-image-768x1004.png": {
+                                  "type": "File",
+                                  "name": "apple-touch-startup-image-768x1004.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/f9faa43e9109b9aff08f24839b4e1dba9aaaa7c343bc5f61ad220f5a363cacfe"
+                                },
+                                "coast-228x228.png": {
+                                  "type": "File",
+                                  "name": "coast-228x228.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/5f94afb9bcc8e71232deba7836325c3ef4ef5d9d245e98bb4a22085052a34f01"
+                                },
+                                "firefox_app_512x512.png": {
+                                  "type": "File",
+                                  "name": "firefox_app_512x512.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/71534b63e3e1aa63811b585c8e99fe0a41381766ec5c9e7e3377c3b55ade87f6"
+                                },
+                                "mstile-310x150.png": {
+                                  "type": "File",
+                                  "name": "mstile-310x150.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/92df8b82429a247f7295e373dbaa99f1b40dd07fc7c2b3c2147ceab084db0b2b"
+                                },
+                                "mstile-70x70.png": {
+                                  "type": "File",
+                                  "name": "mstile-70x70.png",
+                                  "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c98050a86f3d246ad3f963a112672bff5214662884091f7bbc32f8087ad422db"
+                                }
+                              }
+                            },
+                            "index.html": {
+                              "type": "File",
+                              "name": "index.html",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/3351051bfd84b68b8f784fb4583f18c2f60034846ce4aeab4f447d858d9958ab"
+                            },
+                            "parameters.bundle.js": {
+                              "type": "File",
+                              "name": "parameters.bundle.js",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/78ee73cade733bd20a0ba6c0a3c5971d1a9c74dde47e2502092155827e3be5f0"
+                            },
+                            "parameters.bundle.js.map": {
+                              "type": "File",
+                              "name": "parameters.bundle.js.map",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/fa529cc4e14b287ef29b05151327e20e72c553bf32a13a7a8e976c6d9372ebfd"
+                            },
+                            "worker.bundle.js": {
+                              "type": "File",
+                              "name": "worker.bundle.js",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/83cac7574f7d41e01b424f77c9ce0492f92db72a532e9018fb4f31cf94d4e53a"
+                            },
+                            "worker.bundle.js.map": {
+                              "type": "File",
+                              "name": "worker.bundle.js.map",
+                              "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/f5964a6aac6d582152b87fb8a3c5d3c6204eb670715e1317be79e12c366388d0"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "launch": {
+                      "type": "Folder",
+                      "name": "launch",
+                      "paths": {
+                        "dreamview.launch": {
+                          "type": "File",
+                          "name": "dreamview.launch",
+                          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/0d64140a63cd3db28787829428deeeb93e67456e1be7a18ca8219b02d11d193b"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "readme.txt": {
+          "type": "File",
+          "name": "readme.txt",
+          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/5a88f5c5b669d946e6ab3afc2c6979ae7624224dc6a0b4350691aba2ecb0ac89"
+        },
+        "yw_install.sh": {
+          "type": "File",
+          "name": "yw_install.sh",
+          "path": "/default/projects/d1990118-06a5-4e89-b538-c491ad9600cc/records/5d233dab-2d15-4ee1-b815-5031c10a1850/blobs/c3e4b66867d7c75a3e6e9a84ce83db713e7ab5c419274d8b7f99fac6de734deb"
+        }
+      }
+    }
+  }
+}
