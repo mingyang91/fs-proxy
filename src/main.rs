@@ -15,17 +15,29 @@ use std::os::unix::fs::MetadataExt;
 use std::rc::Rc;
 use std::sync::{Arc};
 use std::time::{Duration, UNIX_EPOCH};
+use slog::{error, debug, info, Logger, o, Drain};
+use slog_term;
+use slog_async::{Async};
 use crate::args::Args;
 use tokio;
 use tokio::io::{AsyncSeekExt, AsyncReadExt};
 use tokio::runtime::{Runtime};
 use tokio::sync::Mutex;
-use log::{debug, error, info};
 use tokio::fs::File;
 use crate::inode::{INode, INodeOps, INodeTable};
 use crate::mapping::Path;
+use lazy_static::lazy_static;
 
 const TTL: Duration = Duration::from_secs(0); // 1 second
+lazy_static! {
+  static ref LOG: Logger = {
+    let decorator = slog_term::TermDecorator::new().build();
+    let drain = slog_term::CompactFormat::new(decorator).build().fuse();
+    let drain = Async::new(drain).build().fuse();
+    Logger::root(drain, o!())
+  };
+}
+
 
 const HELLO_DIR_ATTR: FileAttr = FileAttr {
   ino: 1,
@@ -132,7 +144,7 @@ fn make_folder_attr(inode: &INode) -> FileAttr {
 
 impl Filesystem for MappingFS {
   fn lookup(&mut self, _req: &Request, parent: u64, name: &OsStr, reply: ReplyEntry) {
-    debug!("lookup called with parent={}, name={:?}", parent, name);
+    debug!(LOG, "lookup called with parent={}, name={:?}", parent, name);
     let Some(filename) = name.to_str() else {
       reply.error(libc::ENOENT);
       return;
@@ -142,24 +154,24 @@ impl Filesystem for MappingFS {
       Some(inode) => {
         match inode.borrow().deref() {
           INode::File { target, .. } => {
-            debug!("lookup: found file {} -> {}", filename, target);
+            debug!(LOG, "lookup: found file {} -> {}", filename, target);
             let binding = target.clone();
             let ino = inode.borrow().get_ino();
             self.runtime.spawn(async move {
               match Self::getattr(ino, &binding).await {
                 Ok(attr) => {
-                  debug!("lookup: got attr for {}: {:?}", binding, attr);
+                  debug!(LOG, "lookup: got attr for {}: {:?}", binding, attr);
                   reply.entry(&TTL, &attr, 0);
                 }
                 Err(err) => {
-                  error!("Failed to get attr for {}: {}", binding, err);
+                  error!(LOG, "Failed to get attr for {}: {}", binding, err);
                   reply.error(libc::EIO)
                 }
               }
             });
           }
           INode::Folder { .. } => {
-            debug!("lookup: found folder {}", filename);
+            debug!(LOG, "lookup: found folder {}", filename);
             let attr = make_folder_attr(&*inode.borrow());
             reply.entry(&TTL, &attr, 0);
           }
@@ -186,7 +198,7 @@ impl Filesystem for MappingFS {
               reply.attr(&TTL, &attr);
             }
             Err(err) => {
-              error!("Failed to get attr for {}: {}", bind, err);
+              error!(LOG, "Failed to get attr for {}: {}", bind, err);
               reply.error(libc::EIO)
             }
           }
@@ -222,7 +234,7 @@ impl Filesystem for MappingFS {
           reply.opened(fh, 0);
         }
         Err(err) => {
-          info!("Failed to open file {}: {}", binding, err);
+          info!(LOG, "Failed to open file {}: {}", binding, err);
           reply.error(libc::EIO);
         }
       }
@@ -240,13 +252,13 @@ impl Filesystem for MappingFS {
     _lock: Option<u64>,
     reply: ReplyData,
   ) {
-    debug!("read(ino={}, offset={})", ino, offset);
+    debug!(LOG, "read(ino={}, offset={})", ino, offset);
     let send_inner = self.inner.clone();
     self.runtime.spawn(async move {
       let inner = send_inner.lock().await;
 
       let Some(arc_file) = inner.file_handles.get(&_fh) else {
-        error!("Failed to find file handle {}", _fh);
+        error!(LOG, "Failed to find file handle {}", _fh);
         reply.error(libc::EBADF);
         return;
       };
@@ -257,7 +269,7 @@ impl Filesystem for MappingFS {
       let file_size = match file.metadata().await {
         Ok(metadata) => metadata.len(),
         Err(err) => {
-          error!("Failed to get metadata for file handle {}: {}", _fh, err);
+          error!(LOG, "Failed to get metadata for file handle {}: {}", _fh, err);
           reply.error(libc::EIO);
           return;
         }
@@ -266,14 +278,14 @@ impl Filesystem for MappingFS {
       let read_size = min(size, file_size.saturating_sub(offset as u64) as u32);
 
       if let Err(err) = file.seek(SeekFrom::Start(offset as u64)).await {
-        error!("Failed to seek file handle {}: {}", _fh, err);
+        error!(LOG, "Failed to seek file handle {}: {}", _fh, err);
         reply.error(libc::EIO);
         return;
       };
 
       let mut buf = vec![0; read_size as usize];
       if let Err(err) = file.read_exact(&mut buf).await {
-        error!("Failed to read file handle {}: {}", _fh, err);
+        error!(LOG, "Failed to read file handle {}: {}", _fh, err);
         reply.error(libc::EIO);
         return;
       };
@@ -283,17 +295,17 @@ impl Filesystem for MappingFS {
   }
 
   fn release(&mut self, _req: &Request<'_>, _ino: u64, fh: u64, _flags: i32, _lock_owner: Option<u64>, _flush: bool, reply: ReplyEmpty) {
-    debug!("release(fh={})", fh);
+    debug!(LOG, "release(fh={})", fh);
     let send_inner = self.inner.clone();
     self.runtime.spawn(async move {
       let mut inner = send_inner.lock().await;
       let Some(_file) = inner.file_handles.remove(&fh) else {
-        error!("Failed to find file handle {}", fh);
+        error!(LOG, "Failed to find file handle {}", fh);
         reply.error(libc::ENOENT);
         return;
       };
       reply.ok();
-      info!("Closing file handle {}", fh);
+      info!(LOG, "Closing file handle {}", fh);
     });
   }
 
@@ -305,14 +317,14 @@ impl Filesystem for MappingFS {
     offset: i64,
     mut reply: ReplyDirectory,
   ) {
-    debug!("readdir(ino={}, offset={})", ino, offset);
+    debug!(LOG, "readdir(ino={}, offset={})", ino, offset);
     let Some(inode) = self.inode_table.get_by_ino(ino) else {
-      debug!("readdir(ino={}): libc::ENOENT", ino);
+      debug!(LOG, "readdir(ino={}): libc::ENOENT", ino);
       reply.error(libc::ENOENT);
       return;
     };
 
-    debug!("readdir(ino={}): {:?}", ino, inode.clone().borrow().get_name());
+    debug!(LOG, "readdir(ino={}): {:?}", ino, inode.clone().borrow().get_name());
 
     let curr = inode.borrow();
     let mut files = vec![
@@ -341,11 +353,11 @@ impl Filesystem for MappingFS {
       let file = entry.borrow();
       let ret = match file.deref() {
         INode::File { name, .. } => {
-          debug!("file[{}]: {:?}", i, entry.borrow().get_name());
+          debug!(LOG, "file[{}]: {:?}", i, entry.borrow().get_name());
           reply.add(file.get_ino(), (i + 1) as i64, FileType::RegularFile, name)
         }
         INode::Folder { name, .. } => {
-          debug!("folder[{}]: {:?}", i, entry.borrow().get_name());
+          debug!(LOG, "folder[{}]: {:?}", i, entry.borrow().get_name());
           reply.add(file.get_ino(), (i + 1) as i64, FileType::Directory, name)
         }
       };
