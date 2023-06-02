@@ -75,8 +75,8 @@ impl MappingFS {
     }
   }
 
-  async fn getattr(name: &String) -> Result<FileAttr, Error> {
-    let file = tokio::fs::File::open(name).await?;
+  async fn getattr(ino: u64, name: &String) -> Result<FileAttr, Error> {
+    let file = File::open(name).await?;
     let metadata = file.metadata().await?;
     let kind = if metadata.is_dir() {
       FileType::Directory
@@ -89,7 +89,7 @@ impl MappingFS {
     };
 
     let attr = FileAttr {
-      ino: metadata.ino(),
+      ino,
       size: metadata.size(),
       blocks: metadata.blocks(),
       atime: UNIX_EPOCH.add(Duration::from_secs(metadata.atime() as u64)),
@@ -143,8 +143,9 @@ impl Filesystem for MappingFS {
           INode::File { target, .. } => {
             debug!("lookup: found file {} -> {}", filename, target);
             let binding = target.clone();
+            let ino = inode.borrow().get_ino();
             self.runtime.spawn(async move {
-              match Self::getattr(&binding).await {
+              match Self::getattr(ino, &binding).await {
                 Ok(attr) => {
                   debug!("lookup: got attr for {}: {:?}", binding, attr);
                   reply.entry(&TTL, &attr, 0);
@@ -179,7 +180,7 @@ impl Filesystem for MappingFS {
       INode::File { target, .. } => {
         let bind = target.clone();
         self.runtime.spawn(async move {
-          match Self::getattr(&bind).await {
+          match Self::getattr(ino, &bind).await {
             Ok(attr) => {
               reply.attr(&TTL, &attr);
             }
