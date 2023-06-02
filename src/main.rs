@@ -12,6 +12,7 @@ use std::ffi::OsStr;
 use std::io::{Error, SeekFrom};
 use std::ops::{Add, Deref};
 use std::os::unix::fs::MetadataExt;
+use std::process::exit;
 use std::rc::Rc;
 use std::sync::{Arc};
 use std::time::{Duration, UNIX_EPOCH};
@@ -384,8 +385,20 @@ fn main() {
   }
 
   let config = read_mapping_file(&args);
-  let mapping_fs = MappingFS::new(Runtime::new().unwrap(), config);
-  fuser::mount2(mapping_fs, args.mountpoint, &options).unwrap();
+
+  let runtime = match Runtime::new() {
+    Ok(runtime) => runtime,
+    Err(err) => {
+      error!(LOG, "Failed to create tokio runtime: {}", err);
+      exit(exitcode::SOFTWARE);
+    }
+  };
+
+  let mapping_fs = MappingFS::new(runtime, config);
+  if let Err(err) = fuser::mount2(mapping_fs, args.mountpoint, &options) {
+    error!(LOG, "Failed to mount filesystem: {}", err);
+    exit(exitcode::SOFTWARE);
+  }
 }
 
 fn read_mapping_file(args: &Args) -> Path {

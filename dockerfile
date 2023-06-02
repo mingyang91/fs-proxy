@@ -26,5 +26,5 @@ COPY --from=builder /app/target/release/fs-proxy /app/fs-proxy
 COPY res /app/res
 WORKDIR /app
 RUN mkdir -p /workdir/fs-proxy
-ENV RUST_LOG=debug
+ENV RUST_LOG=warn
 CMD ["./fs-proxy", "--mapping-file", "/app/res/mapping-tree.json", "/workdir/fs-proxy"]
