@@ -24,7 +24,7 @@ use tokio::fs::File;
 use crate::inode::{INode, INodeOps, INodeTable};
 use crate::mapping::Path;
 
-const TTL: Duration = Duration::from_secs(1); // 1 second
+const TTL: Duration = Duration::from_secs(0); // 1 second
 
 const HELLO_DIR_ATTR: FileAttr = FileAttr {
   ino: 1,
@@ -147,7 +147,7 @@ impl Filesystem for MappingFS {
               match Self::getattr(&binding).await {
                 Ok(attr) => {
                   debug!("lookup: got attr for {}: {:?}", binding, attr);
-                  reply.entry(&Duration::new(0, 0), &attr, 0);
+                  reply.entry(&TTL, &attr, 0);
                 }
                 Err(err) => {
                   error!("Failed to get attr for {}: {}", binding, err);
