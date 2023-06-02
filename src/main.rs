@@ -16,6 +16,7 @@ use std::process::exit;
 use std::rc::Rc;
 use std::sync::{Arc};
 use std::time::{Duration, UNIX_EPOCH};
+use std::fmt::{Display, Formatter};
 use slog::{error, debug, info, Logger, o, Drain};
 use slog_term;
 use slog_async::{Async};
@@ -384,7 +385,13 @@ fn main() {
     options.push(MountOption::AllowRoot);
   }
 
-  let config = read_mapping_file(&args);
+  let config = match read_mapping_file(&args) {
+    Ok(cfg) => cfg,
+    Err(err) => {
+      error!(LOG, "Failed to read mapping file: {}", err);
+      exit(exitcode::CONFIG);
+    }
+  };
 
   let runtime = match Runtime::new() {
     Ok(runtime) => runtime,
@@ -401,8 +408,24 @@ fn main() {
   }
 }
 
-fn read_mapping_file(args: &Args) -> Path {
-  let mapping_file = std::fs::File::open(&args.mapping_file).unwrap();
+fn read_mapping_file(args: &Args) -> Result<Path, StartError> {
+  let mapping_file = std::fs::File::open(&args.mapping_file)
+    .map_err(|e| StartError::Io(e))?;
   let rdr = std::io::BufReader::new(mapping_file);
-  serde_json::from_reader(rdr).unwrap()
+  serde_json::from_reader(rdr)
+    .map_err(|e| StartError::Serde(e))
+}
+
+enum StartError {
+  Io(Error),
+  Serde(serde_json::Error),
+}
+
+impl Display for StartError {
+  fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    match self {
+      StartError::Io(err) => write!(f, "IO error: {}", err),
+      StartError::Serde(err) => write!(f, "Serde error: {}", err),
+    }
+  }
 }
