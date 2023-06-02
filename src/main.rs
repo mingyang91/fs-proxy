@@ -146,7 +146,8 @@ impl Filesystem for MappingFS {
             self.runtime.spawn(async move {
               match Self::getattr(&binding).await {
                 Ok(attr) => {
-                  reply.entry(&TTL, &attr, 0);
+                  debug!("lookup: got attr for {}: {:?}", binding, attr);
+                  reply.entry(&Duration::new(0, 0), &attr, 0);
                 }
                 Err(err) => {
                   error!("Failed to get attr for {}: {}", binding, err);
