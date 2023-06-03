@@ -24,7 +24,7 @@ use crate::args::Args;
 use tokio;
 use tokio::io::{AsyncSeekExt, AsyncReadExt};
 use tokio::runtime::{Runtime};
-use tokio::sync::Mutex;
+use tokio::sync::RwLock;
 use tokio::fs::File;
 use crate::inode::{INode, INodeOps, INodeTable};
 use crate::mapping::Path;
@@ -60,7 +60,7 @@ const HELLO_DIR_ATTR: FileAttr = FileAttr {
 };
 
 struct Inner {
-  file_handles: BTreeMap<u64, Arc<Mutex<File>>>,
+  file_handles: BTreeMap<u64, Arc<RwLock<File>>>,
   counter: u64,
 }
 
@@ -74,7 +74,7 @@ impl Inner {
 struct MappingFS {
   runtime: Runtime,
   inode_table: INodeTable,
-  inner: Arc<Mutex<Inner>>,
+  inner: Arc<RwLock<Inner>>,
 }
 
 impl MappingFS {
@@ -83,7 +83,7 @@ impl MappingFS {
     Self {
       runtime,
       inode_table: INodeTable::from(root),
-      inner: Arc::new(Mutex::new(Inner {
+      inner: Arc::new(RwLock::new(Inner {
         file_handles: Default::default(),
         counter: 0,
       })),
@@ -229,8 +229,8 @@ impl Filesystem for MappingFS {
     self.runtime.spawn(async move {
       match File::open(&binding).await {
         Ok(file) => {
-          let arc_file = Arc::new(Mutex::new(file));
-          let mut inner = send_inner.lock().await;
+          let arc_file = Arc::new(RwLock::new(file));
+          let mut inner = send_inner.write().await;
           let fh = inner.inc_counter();
           inner.file_handles.insert(fh, arc_file);
           reply.opened(fh, 0);
@@ -257,7 +257,7 @@ impl Filesystem for MappingFS {
     debug!(LOG, "read(ino={}, offset={})", ino, offset);
     let send_inner = self.inner.clone();
     self.runtime.spawn(async move {
-      let inner = send_inner.lock().await;
+      let inner = send_inner.read().await;
 
       let Some(arc_file) = inner.file_handles.get(&_fh) else {
         error!(LOG, "Failed to find file handle {}", _fh);
@@ -266,7 +266,7 @@ impl Filesystem for MappingFS {
       };
 
       let file_clone = arc_file.clone();
-      let mut file = file_clone.lock().await;
+      let mut file = file_clone.write().await;
 
       let file_size = match file.metadata().await {
         Ok(metadata) => metadata.len(),
@@ -300,7 +300,7 @@ impl Filesystem for MappingFS {
     debug!(LOG, "release(fh={})", fh);
     let send_inner = self.inner.clone();
     self.runtime.spawn(async move {
-      let mut inner = send_inner.lock().await;
+      let mut inner = send_inner.write().await;
       let Some(_file) = inner.file_handles.remove(&fh) else {
         error!(LOG, "Failed to find file handle {}", fh);
         reply.error(libc::ENOENT);
